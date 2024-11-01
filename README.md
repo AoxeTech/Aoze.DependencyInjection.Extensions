@@ -1,2 +1,2 @@
-# Aoze.DependencyInjection.Extensions
+# Aoxe.DependencyInjection.Extensions
 The extensions for DependencyInjection
