@@ -6,6 +6,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{32E0AC0E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aoxe.DependencyInjection.Extensions", "src\Aoxe.DependencyInjection.Extensions\Aoxe.DependencyInjection.Extensions.csproj", "{897DF2CA-6D66-465B-82D0-06D3805011D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aoxe.DependencyInjection.Extensions.TestProject", "Aoxe.DependencyInjection.Extensions.TestProject\Aoxe.DependencyInjection.Extensions.TestProject.csproj", "{4CAE7EA3-F30F-4375-B93F-2AFF1CB200E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,11 +15,16 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{897DF2CA-6D66-465B-82D0-06D3805011D9} = {1097F45A-C0A7-494A-B9C6-9360BDDC93BF}
+		{4CAE7EA3-F30F-4375-B93F-2AFF1CB200E6} = {32E0AC0E-A3CC-43E7-BADB-7D9042FA1FC2}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{897DF2CA-6D66-465B-82D0-06D3805011D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{897DF2CA-6D66-465B-82D0-06D3805011D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{897DF2CA-6D66-465B-82D0-06D3805011D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{897DF2CA-6D66-465B-82D0-06D3805011D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CAE7EA3-F30F-4375-B93F-2AFF1CB200E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CAE7EA3-F30F-4375-B93F-2AFF1CB200E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CAE7EA3-F30F-4375-B93F-2AFF1CB200E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CAE7EA3-F30F-4375-B93F-2AFF1CB200E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
