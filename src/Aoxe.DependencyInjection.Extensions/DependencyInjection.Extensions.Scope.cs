@@ -1,6 +1,3 @@
 ﻿namespace Aoxe.DependencyInjection.Extensions;
 
-public class DependencyInjection_Extensions_Scope
-{
-    
-}
+public static partial class DependencyInjectionExtensions { }
