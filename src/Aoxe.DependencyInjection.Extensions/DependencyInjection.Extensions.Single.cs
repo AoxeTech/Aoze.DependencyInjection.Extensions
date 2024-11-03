@@ -93,6 +93,14 @@ public static partial class DependencyInjectionExtensions
     )
         where TService : class
         where TImplementation : class, TService =>
+        // services
+        //     .AddSingleton<TService, TImplementation>()
+        //     .AddSingleton<Lazy<TService>>(
+        //         provider =>
+        //             new Lazy<TService>(
+        //                 () => ActivatorUtilities.CreateInstance<TImplementation>(provider)
+        //             )
+        //     );
         services
             .AddSingleton<TService, TImplementation>()
             .AddSingleton<Lazy<TService>>(

@@ -4,7 +4,7 @@ public static partial class DependencyInjectionExtensions
 {
     //
     // Summary:
-    //     Adds a transient service of the type specified in serviceType with an implementation
+    //     Adds a scoped service of the type specified in serviceType with an implementation
     //     of the type specified in implementationType to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
     //
     //
@@ -21,21 +21,21 @@ public static partial class DependencyInjectionExtensions
     //
     // Returns:
     //     A reference to this instance after the operation has completed.
-    public static IServiceCollection AddTransientWithLazy(
+    public static IServiceCollection AddScopedWithLazy(
         this IServiceCollection services,
         Type serviceType,
         Type implementationType
     ) =>
         services
-            .AddTransient(serviceType, implementationType)
-            .AddTransient(
+            .AddScoped(serviceType, implementationType)
+            .AddScoped(
                 typeof(Lazy<>).MakeGenericType(serviceType),
                 typeof(Lazy<>).MakeGenericType(implementationType)
             );
 
     //
     // Summary:
-    //     Adds a transient service of the type specified in serviceType with a factory
+    //     Adds a scoped service of the type specified in serviceType with a factory
     //     specified in implementationFactory to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
     //
     //
@@ -52,21 +52,21 @@ public static partial class DependencyInjectionExtensions
     //
     // Returns:
     //     A reference to this instance after the operation has completed.
-    public static IServiceCollection AddTransientWithLazy(
+    public static IServiceCollection AddScopedWithLazy(
         this IServiceCollection services,
         Type serviceType,
         Func<IServiceProvider, object> implementationFactory
     ) =>
         services
-            .AddTransient(serviceType, implementationFactory)
-            .AddTransient(
+            .AddScoped(serviceType, implementationFactory)
+            .AddScoped(
                 typeof(Lazy<>).MakeGenericType(serviceType),
                 provider => new Lazy<object>(() => implementationFactory(provider))
             );
 
     //
     // Summary:
-    //     Adds a transient service of the type specified in TService with an implementation
+    //     Adds a scoped service of the type specified in TService with an implementation
     //     type specified in TImplementation using the factory specified in implementationFactory
     //     to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
     //
@@ -88,22 +88,22 @@ public static partial class DependencyInjectionExtensions
     //
     // Returns:
     //     A reference to this instance after the operation has completed.
-    public static IServiceCollection AddTransientWithLazy<TService, TImplementation>(
+    public static IServiceCollection AddScopedWithLazy<TService, TImplementation>(
         this IServiceCollection services
     )
         where TService : class
         where TImplementation : class, TService =>
         // services
-        //     .AddTransient<TService, TImplementation>()
-        //     .AddTransient<Lazy<TService>>(
+        //     .AddScoped<TService, TImplementation>()
+        //     .AddScoped<Lazy<TService>>(
         //         provider =>
         //             new Lazy<TService>(
         //                 () => ActivatorUtilities.CreateInstance<TImplementation>(provider)
         //             )
         //     );
         services
-            .AddTransient<TService, TImplementation>()
-            .AddTransient<Lazy<TService>>(
+            .AddScoped<TService, TImplementation>()
+            .AddScoped<Lazy<TService>>(
                 provider =>
                     new Lazy<TService>(
                         () => ActivatorUtilities.CreateInstance<TImplementation>(provider)
@@ -112,7 +112,7 @@ public static partial class DependencyInjectionExtensions
 
     //
     // Summary:
-    //     Adds a transient service of the type specified in serviceType to the specified
+    //     Adds a scoped service of the type specified in serviceType to the specified
     //     Microsoft.Extensions.DependencyInjection.IServiceCollection.
     //
     // Parameters:
@@ -125,17 +125,14 @@ public static partial class DependencyInjectionExtensions
     //
     // Returns:
     //     A reference to this instance after the operation has completed.
-    public static IServiceCollection AddTransientWithLazy(
+    public static IServiceCollection AddScopedWithLazy(
         this IServiceCollection services,
         Type serviceType
-    ) =>
-        services
-            .AddTransient(serviceType)
-            .AddTransient(typeof(Lazy<>).MakeGenericType(serviceType));
+    ) => services.AddScoped(serviceType).AddScoped(typeof(Lazy<>).MakeGenericType(serviceType));
 
     //
     // Summary:
-    //     Adds a transient service of the type specified in TService to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
+    //     Adds a scoped service of the type specified in TService to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
     //
     //
     // Parameters:
@@ -149,14 +146,12 @@ public static partial class DependencyInjectionExtensions
     //
     // Returns:
     //     A reference to this instance after the operation has completed.
-    public static IServiceCollection AddTransientWithLazy<TService>(
-        this IServiceCollection services
-    )
-        where TService : class => services.AddTransient<TService>().AddTransient<Lazy<TService>>();
+    public static IServiceCollection AddScopedWithLazy<TService>(this IServiceCollection services)
+        where TService : class => services.AddScoped<TService>().AddScoped<Lazy<TService>>();
 
     //
     // Summary:
-    //     Adds a transient service of the type specified in TService with a factory specified
+    //     Adds a scoped service of the type specified in TService with a factory specified
     //     in implementationFactory to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
     //
     //
@@ -174,20 +169,20 @@ public static partial class DependencyInjectionExtensions
     //
     // Returns:
     //     A reference to this instance after the operation has completed.
-    public static IServiceCollection AddTransientWithLazy<TService>(
+    public static IServiceCollection AddScopedWithLazy<TService>(
         this IServiceCollection services,
         Func<IServiceProvider, TService> implementationFactory
     )
         where TService : class =>
         services
-            .AddTransient(implementationFactory)
-            .AddTransient<Lazy<TService>>(
+            .AddScoped(implementationFactory)
+            .AddScoped<Lazy<TService>>(
                 provider => new Lazy<TService>(() => implementationFactory(provider))
             );
 
     //
     // Summary:
-    //     Adds a transient service of the type specified in TService with an implementation
+    //     Adds a scoped service of the type specified in TService with an implementation
     //     type specified in TImplementation using the factory specified in implementationFactory
     //     to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
     //
@@ -209,15 +204,15 @@ public static partial class DependencyInjectionExtensions
     //
     // Returns:
     //     A reference to this instance after the operation has completed.
-    public static IServiceCollection AddTransientWithLazy<TService, TImplementation>(
+    public static IServiceCollection AddScopedWithLazy<TService, TImplementation>(
         this IServiceCollection services,
         Func<IServiceProvider, TImplementation> implementationFactory
     )
         where TService : class
         where TImplementation : class, TService =>
         services
-            .AddTransient<TService, TImplementation>()
-            .AddTransient<Lazy<TService>>(
+            .AddScoped<TService, TImplementation>()
+            .AddScoped<Lazy<TService>>(
                 provider => new Lazy<TService>(() => implementationFactory(provider))
             );
 }
