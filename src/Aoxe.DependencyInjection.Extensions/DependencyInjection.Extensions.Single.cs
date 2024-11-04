@@ -18,9 +18,9 @@ public static partial class DependencyInjectionExtensions
         Type implementationType
     )
     {
-        services.AddScoped(serviceType, implementationType);
+        services.AddSingleton(serviceType, implementationType);
         var lazyServiceType = typeof(Lazy<>).MakeGenericType(serviceType);
-        return services.AddScoped(
+        return services.AddSingleton(
             lazyServiceType,
             provider =>
             {
@@ -49,9 +49,9 @@ public static partial class DependencyInjectionExtensions
         Func<IServiceProvider, object> implementationFactory
     )
     {
-        services.AddScoped(serviceType, implementationFactory);
+        services.AddSingleton(serviceType, implementationFactory);
         var lazyServiceType = typeof(Lazy<>).MakeGenericType(serviceType);
-        return services.AddScoped(
+        return services.AddSingleton(
             lazyServiceType,
             provider =>
             {
