@@ -21,6 +21,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<ITest>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -42,6 +44,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<ITest>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -63,6 +67,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<ITest>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -84,6 +90,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<TestClass>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -105,6 +113,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<TestClass>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -126,6 +136,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<ITest>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -147,6 +159,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<ITest>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -168,6 +182,8 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<ITest>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 
     [Fact]
@@ -189,5 +205,7 @@ public class AddSingleUnitTest
         Assert.NotNull(lazyService);
         Assert.IsType<Lazy<ITest>>(lazyService);
         Assert.IsType<TestClass>(lazyService.Value);
+        
+        Assert.Equal(service, lazyService.Value);
     }
 }

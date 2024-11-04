@@ -61,14 +61,6 @@ public static partial class DependencyInjectionExtensions
     )
         where TService : class
         where TImplementation : class, TService =>
-        // services
-        //     .AddScoped<TService, TImplementation>()
-        //     .AddScoped<Lazy<TService>>(
-        //         provider =>
-        //             new Lazy<TService>(
-        //                 () => ActivatorUtilities.CreateInstance<TImplementation>(provider)
-        //             )
-        //     );
         services
             .AddScoped<TService, TImplementation>()
             .AddScoped<Lazy<TService>>(provider => new Lazy<TService>(

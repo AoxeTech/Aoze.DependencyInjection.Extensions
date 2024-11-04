@@ -61,14 +61,6 @@ public static partial class DependencyInjectionExtensions
     )
         where TService : class
         where TImplementation : class, TService =>
-        // services
-        //     .AddTransient<TService, TImplementation>()
-        //     .AddTransient<Lazy<TService>>(
-        //         provider =>
-        //             new Lazy<TService>(
-        //                 () => ActivatorUtilities.CreateInstance<TImplementation>(provider)
-        //             )
-        //     );
         services
             .AddTransient<TService, TImplementation>()
             .AddTransient<Lazy<TService>>(provider => new Lazy<TService>(
