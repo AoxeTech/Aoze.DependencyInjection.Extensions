@@ -16,13 +16,22 @@ public static partial class DependencyInjectionExtensions
         this IServiceCollection services,
         Type serviceType,
         Type implementationType
-    ) =>
-        services
-            .AddTransient(serviceType, implementationType)
-            .AddTransient(
-                typeof(Lazy<>).MakeGenericType(serviceType),
-                typeof(Lazy<>).MakeGenericType(implementationType)
-            );
+    )
+    {
+        services.AddTransient(serviceType, implementationType);
+        var lazyServiceType = typeof(Lazy<>).MakeGenericType(serviceType);
+        return services.AddTransient(
+            lazyServiceType,
+            provider =>
+            {
+                // Create a Func<TService> that calls provider.GetService<TService>()
+                var func = CreateFunc(provider, serviceType);
+
+                // Create an instance of Lazy<TService> with the Func<TService>
+                return Activator.CreateInstance(lazyServiceType, func)!;
+            }
+        );
+    }
 
     /// <summary>
     /// Adds a transient service of the type specified in <paramref name="serviceType"/> with a
@@ -38,13 +47,22 @@ public static partial class DependencyInjectionExtensions
         this IServiceCollection services,
         Type serviceType,
         Func<IServiceProvider, object> implementationFactory
-    ) =>
-        services
-            .AddTransient(serviceType, implementationFactory)
-            .AddTransient(
-                typeof(Lazy<>).MakeGenericType(serviceType),
-                provider => new Lazy<object>(() => implementationFactory(provider))
-            );
+    )
+    {
+        services.AddTransient(serviceType, implementationFactory);
+        var lazyServiceType = typeof(Lazy<>).MakeGenericType(serviceType);
+        return services.AddTransient(
+            lazyServiceType,
+            provider =>
+            {
+                // Create a Func<TService> that calls provider.GetService<TService>()
+                var func = CreateFunc(provider, serviceType);
+
+                // Create an instance of Lazy<TService> with the Func<TService>
+                return Activator.CreateInstance(lazyServiceType, func)!;
+            }
+        );
+    }
 
     /// <summary>
     /// Adds a transient service of the type specified in <typeparamref name="TService"/> with an
@@ -63,9 +81,12 @@ public static partial class DependencyInjectionExtensions
         where TImplementation : class, TService =>
         services
             .AddTransient<TService, TImplementation>()
-            .AddTransient<Lazy<TService>>(provider => new Lazy<TService>(
-                () => ActivatorUtilities.CreateInstance<TImplementation>(provider)
-            ));
+            .AddTransient<Lazy<TService>>(
+                provider =>
+                    new Lazy<TService>(
+                        () => ActivatorUtilities.CreateInstance<TImplementation>(provider)
+                    )
+            );
 
     /// <summary>
     /// Adds a transient service of the type specified in <paramref name="serviceType"/> to the
@@ -113,9 +134,9 @@ public static partial class DependencyInjectionExtensions
         where TService : class =>
         services
             .AddTransient(implementationFactory)
-            .AddTransient<Lazy<TService>>(provider => new Lazy<TService>(
-                () => implementationFactory(provider)
-            ));
+            .AddTransient<Lazy<TService>>(
+                provider => new Lazy<TService>(() => implementationFactory(provider))
+            );
 
     /// <summary>
     /// Adds a transient service of the type specified in <typeparamref name="TService"/> with an
@@ -136,7 +157,7 @@ public static partial class DependencyInjectionExtensions
         where TImplementation : class, TService =>
         services
             .AddTransient<TService, TImplementation>(implementationFactory)
-            .AddTransient<Lazy<TService>>(provider => new Lazy<TService>(
-                () => implementationFactory(provider)
-            ));
+            .AddTransient<Lazy<TService>>(
+                provider => new Lazy<TService>(() => implementationFactory(provider))
+            );
 }
