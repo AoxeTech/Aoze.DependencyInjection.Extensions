@@ -25,7 +25,7 @@ public static partial class DependencyInjectionExtensions
             provider =>
             {
                 // Create a Func<TService> that calls provider.GetService<TService>()
-                var func = CreateFunc(provider, serviceType);
+                var func = AddCreateFunc(provider, serviceType);
 
                 // Create an instance of Lazy<TService> with the Func<TService>
                 return Activator.CreateInstance(lazyServiceType, func)!;
@@ -56,7 +56,7 @@ public static partial class DependencyInjectionExtensions
             provider =>
             {
                 // Create a Func<TService> that calls provider.GetService<TService>()
-                var func = CreateFunc(provider, serviceType);
+                var func = AddCreateFunc(provider, serviceType);
 
                 // Create an instance of Lazy<TService> with the Func<TService>
                 return Activator.CreateInstance(lazyServiceType, func)!;
@@ -81,9 +81,9 @@ public static partial class DependencyInjectionExtensions
         where TImplementation : class, TService =>
         services
             .AddScoped<TService, TImplementation>()
-            .AddScoped<Lazy<TService>>(
-                provider => new Lazy<TService>(provider.GetRequiredService<TService>)
-            );
+            .AddScoped<Lazy<TService>>(provider => new Lazy<TService>(
+                provider.GetRequiredService<TService>
+            ));
 
     /// <summary>
     /// Adds a scoped service of the type specified in <paramref name="serviceType"/> to the
@@ -96,7 +96,27 @@ public static partial class DependencyInjectionExtensions
     public static IServiceCollection AddScopedWithLazy(
         this IServiceCollection services,
         Type serviceType
-    ) => services.AddScoped(serviceType).AddScoped(typeof(Lazy<>).MakeGenericType(serviceType));
+    ) =>
+        services
+            .AddScoped(serviceType)
+#if NETSTANDARD2_0
+            .AddScoped(
+                typeof(Lazy<>).MakeGenericType(serviceType),
+                provider =>
+                {
+                    // Create a Func<TService> that calls provider.GetService<TService>()
+                    var func = AddCreateFunc(provider, serviceType);
+
+                    // Create an instance of Lazy<TService> with the Func<TService>
+                    return Activator.CreateInstance(
+                        typeof(Lazy<>).MakeGenericType(serviceType),
+                        func
+                    )!;
+                }
+            );
+#else
+        .AddScoped(typeof(Lazy<>).MakeGenericType(serviceType));
+#endif
 
     /// <summary>
     /// Adds a scoped service of the type specified in <typeparamref name="TService"/> to the
@@ -107,7 +127,14 @@ public static partial class DependencyInjectionExtensions
     /// <returns>A reference to this instance after the operation has completed.</returns>
     /// <seealso cref="ServiceLifetime.Scoped"/>
     public static IServiceCollection AddScopedWithLazy<TService>(this IServiceCollection services)
-        where TService : class => services.AddScoped<TService>().AddScoped<Lazy<TService>>();
+        where TService : class =>
+        services
+            .AddScoped<TService>()
+#if NETSTANDARD2_0
+            .AddScoped<Lazy<TService>>(p => new Lazy<TService>(p.GetRequiredService<TService>));
+#else
+        .AddScoped<Lazy<TService>>();
+#endif
 
     /// <summary>
     /// Adds a scoped service of the type specified in <typeparamref name="TService"/> with a
@@ -126,9 +153,9 @@ public static partial class DependencyInjectionExtensions
         where TService : class =>
         services
             .AddScoped(implementationFactory)
-            .AddScoped<Lazy<TService>>(
-                provider => new Lazy<TService>(provider.GetRequiredService<TService>)
-            );
+            .AddScoped<Lazy<TService>>(provider => new Lazy<TService>(
+                provider.GetRequiredService<TService>
+            ));
 
     /// <summary>
     /// Adds a scoped service of the type specified in <typeparamref name="TService"/> with an
@@ -150,7 +177,7 @@ public static partial class DependencyInjectionExtensions
         where TImplementation : class, TService =>
         services
             .AddScoped<TService, TImplementation>(implementationFactory)
-            .AddScoped<Lazy<TService>>(
-                provider => new Lazy<TService>(provider.GetRequiredService<TService>)
-            );
+            .AddScoped<Lazy<TService>>(provider => new Lazy<TService>(
+                provider.GetRequiredService<TService>
+            ));
 }

@@ -25,7 +25,7 @@ public static partial class DependencyInjectionExtensions
             provider =>
             {
                 // Create a Func<TService> that calls provider.GetService<TService>()
-                var func = CreateFunc(provider, serviceType);
+                var func = AddCreateFunc(provider, serviceType);
 
                 // Create an instance of Lazy<TService> with the Func<TService>
                 return Activator.CreateInstance(lazyServiceType, func)!;
@@ -56,7 +56,7 @@ public static partial class DependencyInjectionExtensions
             provider =>
             {
                 // Create a Func<TService> that calls provider.GetService<TService>()
-                var func = CreateFunc(provider, serviceType);
+                var func = AddCreateFunc(provider, serviceType);
 
                 // Create an instance of Lazy<TService> with the Func<TService>
                 return Activator.CreateInstance(lazyServiceType, func)!;
@@ -81,9 +81,9 @@ public static partial class DependencyInjectionExtensions
         where TImplementation : class, TService =>
         services
             .AddSingleton<TService, TImplementation>()
-            .AddSingleton<Lazy<TService>>(
-                provider => new Lazy<TService>(provider.GetRequiredService<TService>)
-            );
+            .AddSingleton<Lazy<TService>>(provider => new Lazy<TService>(
+                provider.GetRequiredService<TService>
+            ));
 
     /// <summary>
     /// Adds a singleton service of the type specified in <paramref name="serviceType"/> to the
@@ -99,7 +99,24 @@ public static partial class DependencyInjectionExtensions
     ) =>
         services
             .AddSingleton(serviceType)
+#if NETSTANDARD2_0
+            .AddSingleton(
+                typeof(Lazy<>).MakeGenericType(serviceType),
+                provider =>
+                {
+                    // Create a Func<TService> that calls provider.GetService<TService>()
+                    var func = AddCreateFunc(provider, serviceType);
+
+                    // Create an instance of Lazy<TService> with the Func<TService>
+                    return Activator.CreateInstance(
+                        typeof(Lazy<>).MakeGenericType(serviceType),
+                        func
+                    )!;
+                }
+            );
+#else
             .AddSingleton(typeof(Lazy<>).MakeGenericType(serviceType));
+#endif
 
     /// <summary>
     /// Adds a singleton service of the type specified in <typeparamref name="TService"/> to the
@@ -112,7 +129,14 @@ public static partial class DependencyInjectionExtensions
     public static IServiceCollection AddSingletonWithLazy<TService>(
         this IServiceCollection services
     )
-        where TService : class => services.AddSingleton<TService>().AddSingleton<Lazy<TService>>();
+        where TService : class =>
+        services
+            .AddSingleton<TService>()
+#if NETSTANDARD2_0
+            .AddSingleton<Lazy<TService>>(p => new Lazy<TService>(p.GetRequiredService<TService>));
+#else
+        .AddSingleton<Lazy<TService>>();
+#endif
 
     /// <summary>
     /// Adds a singleton service of the type specified in <typeparamref name="TService"/> with a
@@ -131,9 +155,9 @@ public static partial class DependencyInjectionExtensions
         where TService : class =>
         services
             .AddSingleton(implementationFactory)
-            .AddSingleton<Lazy<TService>>(
-                provider => new Lazy<TService>(provider.GetRequiredService<TService>)
-            );
+            .AddSingleton<Lazy<TService>>(provider => new Lazy<TService>(
+                provider.GetRequiredService<TService>
+            ));
 
     /// <summary>
     /// Adds a singleton service of the type specified in <typeparamref name="TService"/> with an
@@ -155,9 +179,9 @@ public static partial class DependencyInjectionExtensions
         where TImplementation : class, TService =>
         services
             .AddSingleton<TService, TImplementation>(implementationFactory)
-            .AddSingleton<Lazy<TService>>(
-                provider => new Lazy<TService>(provider.GetRequiredService<TService>)
-            );
+            .AddSingleton<Lazy<TService>>(provider => new Lazy<TService>(
+                provider.GetRequiredService<TService>
+            ));
 
     /// <summary>
     /// Adds a singleton service of the type specified in <paramref name="serviceType"/> with an

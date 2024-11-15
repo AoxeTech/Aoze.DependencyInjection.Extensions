@@ -2,7 +2,7 @@
 
 public static partial class DependencyInjectionExtensions
 {
-    private static object CreateFunc(IServiceProvider provider, Type serviceType)
+    private static object AddCreateFunc(IServiceProvider provider, Type serviceType)
     {
         // Expression: () => provider.GetService<TService>()
         var providerParameter = Expression.Constant(provider);
@@ -10,14 +10,13 @@ public static partial class DependencyInjectionExtensions
         // Get the generic method IServiceProvider.GetService<T>()
         var getServiceMethod = typeof(ServiceProviderServiceExtensions)
             .GetMethods(BindingFlags.Static | BindingFlags.Public)
-            .First(
-                methodInfo =>
-                    methodInfo
-                        is {
-                            Name: nameof(ServiceProviderServiceExtensions.GetService),
-                            IsGenericMethod: true
-                        }
-                    && methodInfo.GetParameters().Length == 1
+            .First(methodInfo =>
+                methodInfo
+                    is {
+                        Name: nameof(ServiceProviderServiceExtensions.GetService),
+                        IsGenericMethod: true
+                    }
+                && methodInfo.GetParameters().Length == 1
             )
             .MakeGenericMethod(serviceType);
 
