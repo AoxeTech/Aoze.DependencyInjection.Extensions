@@ -2,25 +2,23 @@
 
 public static partial class DependencyInjectionExtensions
 {
+    private static readonly MethodInfo GetServiceGenericMethod =
+        typeof(ServiceProviderServiceExtensions)
+            .GetMethods(BindingFlags.Static | BindingFlags.Public)
+            .Single(method =>
+                method.Name == nameof(ServiceProviderServiceExtensions.GetService)
+                && method.IsGenericMethod
+            );
+
     private static object AddCreateFunc(IServiceProvider provider, Type serviceType)
     {
-        // Expression: () => provider.GetService<TService>()
+        // Create a constant expression for the provider
         var providerParameter = Expression.Constant(provider);
 
-        // Get the generic method IServiceProvider.GetService<T>()
-        var getServiceMethod = typeof(ServiceProviderServiceExtensions)
-            .GetMethods(BindingFlags.Static | BindingFlags.Public)
-            .First(methodInfo =>
-                methodInfo
-                    is {
-                        Name: nameof(ServiceProviderServiceExtensions.GetService),
-                        IsGenericMethod: true
-                    }
-                && methodInfo.GetParameters().Length == 1
-            )
-            .MakeGenericMethod(serviceType);
+        // Create the generic GetService method for the specific service type
+        var getServiceMethod = GetServiceGenericMethod.MakeGenericMethod(serviceType);
 
-        // Build the method call expression
+        // Build the method call expression: GetService<TService>(provider)
         var callExpression = Expression.Call(getServiceMethod, providerParameter);
 
         // Create a lambda expression of type Func<TService>
